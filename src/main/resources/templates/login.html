@@ -1,0 +1,32 @@
+<!DOCTYPE html >
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base.html}">
+<head>
+  <title th:text="Login"></title>
+</head>
+
+<body>
+<section layout:fragment="content">
+  <br>
+  <p class="lead mt-4">Sign in using the Companies House login system</p>
+  <p class="lead mt-4"> The user profile journey simulates requesting the Read User Profile scope</p>
+  <hr class="my-4">
+  <br>
+  <form th:action="@{/attemptLogin}">
+    Enter company number: <input type="text" th:name="company"/>
+    <br/><br/>
+    <input class="btn btn-success btn-lg mb-2 mb-md-0 mr-md-4" type="submit" value="User Profile Sign In"/>
+<!--    <a class="btn btn-success btn-lg mb-2 mb-md-0 mr-md-4" href="/attemptLogin" role="button">User-->
+<!--      Profile Sign In</a>-->
+<!--    <br>-->
+  </form>
+  <br>
+
+<!--  <br>-->
+<!--  <a class="btn btn-success btn-lg" href="/loginViaRequestedScope" role="button">Requested Scope-->
+<!--    Sign In</a>-->
+</section>
+</body>
+</html>
+
