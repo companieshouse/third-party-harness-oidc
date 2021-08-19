@@ -17,21 +17,20 @@ The application uses OIDC protocol to authenticate the user towards CH Account (
 * This test harness is built and tested for local use and is not intended to be run in production
 
 ### Docker Usage:
-* Ensure that Docker-chs-development is up to date 
-* Required modules: ch-gov-uk, account-ch-gov-uk and mongo
-* Pull image from private CH registry by running `docker pull 169942020521.dkr.ecr.eu-west-1.amazonaws.com/local/third-party-test-harness:latest` command or run the following steps to build image locally: 
-  * `Make`
-  * Run: `mvn compile jib:dockerBuild -Dimage=169942020521.dkr.ecr.eu-west-1.amazonaws.com/local/third-party-test-harness`
-* Entrypoint is http://chs.local/login
+* `docker build -t test-harness .`
+* `docker run --rm -it --name test-harness --env-file .env -p 8090:8090 test-harness`
+* Entrypoint is http://localhost:8090/login
 
-### Configuration:
-Variable                          | Description                                                          | Example                                                              
---------------------------------- | -------------------------------------------------------------------- | -------------------
-THIRD_PARTY_DUMMY_PORT            | http://localhost:PORT                                                | 8090                                                                 
-CLIENT_ID                         | A value you set yourself within a Mongo collection                   | THIRDPARTYCLIENT                                       
-CLIENT_SECRET                     | A value you set yourself within a Mongo collection                   | CLIENTSECRET 
-REDIRECT_URI                      | The redirect URI after you've finished your CHS journey              | `http://localhost:8090/redirect`                                       
-TOKEN_URI                         | The token URI for CHS live                                           | `https://idam.amido.aws.chdev.org:443/am/oauth2/realms/root/realms/alpha/access_token`     
-PROTECTED_URI                     | The protected URI for CHS live                                       | `https://api.company-information.service.gov.uk/company`               
-USER_URI                          | The user URI for CHS live                                            | `https://idam.amido.aws.chdev.org:443/am/oauth2/realms/root/realms/alpha/userinfo`     
-AUTHORISE_URI                     | The authorise URI for CHS live                                       | `https://idam.amido.aws.chdev.org:443/am/oauth2/realms/root/realms/alpha/authorize` 
+### Environment Variables:
+
+Environment variables can be set in the `.env` file for running in Docker.
+
+| Variable      | Description                                             | Example                                                                                |
+| ------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| CLIENT_ID     | A value you set yourself within a Mongo collection      | THIRDPARTYCLIENT                                                                       |
+| CLIENT_SECRET | A value you set yourself within a Mongo collection      | CLIENTSECRET                                                                           |
+| REDIRECT_URI  | The redirect URI after you've finished your CHS journey | `http://localhost:8090/redirect`                                                       |
+| TOKEN_URI     | The token URI for CHS live                              | `https://idam.amido.aws.chdev.org:443/am/oauth2/realms/root/realms/alpha/access_token` |
+| PROTECTED_URI | The protected URI for CHS live                          | `https://api.company-information.service.gov.uk/company`                               |
+| USER_URI      | The user URI for CHS live                               | `https://idam.amido.aws.chdev.org:443/am/oauth2/realms/root/realms/alpha/userinfo`     |
+| AUTHORISE_URI | The authorise URI for CHS live                          | `https://idam.amido.aws.chdev.org:443/am/oauth2/realms/root/realms/alpha/authorize`    |
