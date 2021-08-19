@@ -1,0 +1,9 @@
+environment = "development"
+vpc_name = "Test & Development"
+task_cpu = 256
+task_memory = 512
+domain_name = "test-harness.amido.aws.chdev.org"
+create_certificate = false
+certificate_domain = "amido.aws.chdev.org"
+create_route53_record = true
+route53_zone = "aws.chdev.org"
