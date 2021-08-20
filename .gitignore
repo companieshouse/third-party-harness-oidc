@@ -5,3 +5,8 @@ third-party-test-harness.iml
 .DS_Store
 .idea/*
 target/*
+
+# Terraform
+.terraform
+*tfplan
+local.auto.tfvars
