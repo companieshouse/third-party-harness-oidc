@@ -18,8 +18,12 @@ variable "subnet_ids" {
   type = list(any)
 }
 
-variable "target_port" {
-  type = number
+variable "applications" {
+  type = list(string)
+}
+
+variable "target_group_arns" {
+  type = list(string)
 }
 
 variable "domain_name" {
@@ -32,10 +36,6 @@ variable "create_route53_record" {
 
 variable "route53_zone" {
   type = string
-}
-
-variable "create_certificate" {
-  type = bool
 }
 
 variable "certificate_domain" {
