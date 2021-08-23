@@ -1,5 +1,4 @@
 data "aws_acm_certificate" "certificate" {
-  count  = var.create_certificate ? 0 : 1
   domain = var.certificate_domain
 }
 
@@ -8,32 +7,9 @@ data "aws_route53_zone" "domain" {
   name  = var.route53_zone
 }
 
-resource "aws_acm_certificate" "certificate" {
-  count             = var.create_certificate ? 1 : 0
-  domain_name       = var.domain_name
-  validation_method = "DNS"
-
-  tags = var.tags
-}
-
-resource "aws_route53_record" "certificate_validation" {
-  count   = var.create_certificate ? 1 : 0
-  name    = element(aws_acm_certificate.certificate.0.domain_validation_options.*.resource_record_name, 0)
-  type    = element(aws_acm_certificate.certificate.0.domain_validation_options.*.resource_record_type, 0)
-  zone_id = data.aws_route53_zone.domain.0.id
-  records = [element(aws_acm_certificate.certificate.0.domain_validation_options.*.resource_record_value, 0)]
-  ttl     = 60
-}
-
-resource "aws_acm_certificate_validation" "certificate" {
-  count                   = var.create_certificate ? 1 : 0
-  certificate_arn         = aws_acm_certificate.certificate.0.arn
-  validation_record_fqdns = [aws_route53_record.certificate_validation.0.fqdn]
-}
-
 resource "aws_route53_record" "lb" {
-  count   = var.create_route53_record ? 1 : 0
-  name    = var.domain_name
+  count   = var.create_route53_record ? length(var.applications) : 0
+  name    = "${var.service_name}-${var.applications[count.index]}${var.domain_name}"
   zone_id = data.aws_route53_zone.domain.0.id
   type    = "A"
   alias {
@@ -74,30 +50,28 @@ resource "aws_lb_listener" "https" {
   load_balancer_arn = aws_lb.main.arn
   port              = 443
   protocol          = "HTTPS"
-  certificate_arn   = var.create_certificate ? aws_acm_certificate_validation.certificate.0.certificate_arn : data.aws_acm_certificate.certificate.0.arn
+  certificate_arn   = data.aws_acm_certificate.certificate.arn
 
   default_action {
-    target_group_arn = aws_lb_target_group.main.arn
+    target_group_arn = var.target_group_arns[0]
     type             = "forward"
   }
 }
 
-resource "aws_lb_target_group" "main" {
-  name        = var.service_name
-  port        = var.target_port
-  protocol    = "HTTP"
-  vpc_id      = var.vpc_id
-  target_type = "ip"
+resource "aws_lb_listener_rule" "host_based_routing" {
+  count        = length(var.applications) - 1
+  listener_arn = aws_lb_listener.https.arn
 
-  health_check {
-    healthy_threshold   = 2
-    unhealthy_threshold = 5
-    timeout             = 30
-    path                = "/login"
-    interval            = 60
+  action {
+    type             = "forward"
+    target_group_arn = var.target_group_arns[count.index + 1]
   }
 
-  tags = var.tags
+  condition {
+    host_header {
+      values = ["${var.applications[count.index + 1]}${var.domain_name}"]
+    }
+  }
 }
 
 resource "aws_security_group" "lb" {

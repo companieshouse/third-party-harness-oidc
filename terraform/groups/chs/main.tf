@@ -26,6 +26,15 @@ module "ecs" {
   tags         = local.common_tags
 }
 
+module "target_groups" {
+  count        = length(var.applications)
+  source       = "./modules/target-group"
+  service_name = "${var.service_name}-${var.applications[count.index]}"
+  vpc_id       = data.aws_vpc.vpc.id
+  target_port  = 8090
+  tags         = local.common_tags
+}
+
 module "internal_lb" {
   source                = "./modules/loadbalancing"
   service_name          = var.service_name
@@ -33,18 +42,19 @@ module "internal_lb" {
   vpc_id                = data.aws_vpc.vpc.id
   ingress_cidr_blocks   = ["0.0.0.0/0"]
   subnet_ids            = data.aws_subnet_ids.application_subnets.ids
-  target_port           = 8090
+  applications          = var.applications
+  target_group_arns     = module.target_groups.*.arn
   domain_name           = var.domain_name
   create_route53_record = var.create_route53_record
   route53_zone          = var.route53_zone
-  create_certificate    = var.create_certificate
   certificate_domain    = var.certificate_domain
   tags                  = local.common_tags
 }
 
 module "test_harness" {
+  count                   = length(var.applications)
   source                  = "./modules/ecs-task"
-  service_name            = var.service_name
+  service_name            = var.applications[count.index]
   vpc_id                  = data.aws_vpc.vpc.id
   subnet_ids              = data.aws_subnet_ids.application_subnets.ids
   ecs_cluster_id          = module.ecs.cluster_id
@@ -54,10 +64,10 @@ module "test_harness" {
   ecr_url                 = var.ecr_url
   task_cpu                = var.task_cpu
   task_memory             = var.task_memory
-  target_group_arn        = module.internal_lb.target_group_arn
+  target_group_arn        = module.target_groups[count.index].arn
   container_port          = 8090
-  client_id               = var.client_id
-  client_secret           = var.client_secret
+  client_id               = var.clients[count.index].client_id
+  client_secret           = var.clients[count.index].client_secret
   redirect_uri            = var.redirect_uri
   token_uri               = var.token_uri
   protected_uri           = var.protected_uri
@@ -65,6 +75,6 @@ module "test_harness" {
   authorise_uri           = var.authorise_uri
   region                  = var.region
   log_group_name          = "forgerock-monitoring"
-  log_prefix              = "test-harness"
+  log_prefix              = "${var.service_name}-${var.applications[count.index]}"
   tags                    = local.common_tags
 }

@@ -16,7 +16,7 @@ variable "vpc_name" {
 variable "service_name" {
   type        = string
   description = "The service name to be used when creating AWS resources"
-  default     = "third-party-harness-oidc"
+  default     = "test-harness"
 }
 
 variable "ecr_url" {
@@ -55,23 +55,32 @@ variable "domain_name" {
   description = "The domain name to use for the application"
 }
 
-variable "create_certificate" {
-  type        = bool
-  description = "Should a Amazon SSL certificate be created"
-}
-
 variable "certificate_domain" {
   type        = string
   description = "The domain used to look up existing certificates"
   default     = "N/A"
 }
 
-variable "client_id" {
-  type = string
+variable "applications" {
+  type    = list(string)
+  default = ["webapps", "api-filing"]
 }
 
-variable "client_secret" {
-  type = string
+variable "clients" {
+  type = list(object({
+    client_id     = string
+    client_secret = string
+  }))
+  default = [
+    {
+      client_id     = "ApiFilingWebClient"
+      client_secret = "ApiFilingWebClient"
+    },
+    {
+      client_id     = "ApiFilingM2MClient"
+      client_secret = "ApiFilingM2MClient"
+    }
+  ]
 }
 
 variable "redirect_uri" {
