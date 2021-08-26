@@ -83,10 +83,6 @@ variable "clients" {
   ]
 }
 
-variable "redirect_uri" {
-  type = string
-}
-
 variable "token_uri" {
   type = string
 }
