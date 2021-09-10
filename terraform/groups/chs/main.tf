@@ -68,7 +68,7 @@ module "test_harness" {
   container_port          = 8090
   client_id               = var.clients[count.index].client_id
   client_secret           = var.clients[count.index].client_secret
-  redirect_uri            = var.redirect_uri
+  redirect_uri            = "https://${var.service_name}-${var.applications[count.index]}${var.domain_name}/redirect"
   token_uri               = var.token_uri
   protected_uri           = var.protected_uri
   user_uri                = var.user_uri
