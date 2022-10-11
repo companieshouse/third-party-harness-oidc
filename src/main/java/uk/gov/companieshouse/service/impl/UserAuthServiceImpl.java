@@ -76,9 +76,9 @@ public class UserAuthServiceImpl implements UserAuthService {
         //Auth server token uri, with access code from logon
         String accessTokenUrl = this.tokenUriTemplate.
                 buildAndExpand(authCode, "authorization_code", redirectUri).toUriString();
-
+        System.out.println("accessTokenUrl: " + accessTokenUrl);
         ResponseEntity<String> response = restTemplate.exchange(accessTokenUrl, HttpMethod.POST, request, String.class);
-
+        System.out.println("response: " + response);
         // Get the Access Token From the received JSON response
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(response.getBody());
@@ -98,12 +98,20 @@ public class UserAuthServiceImpl implements UserAuthService {
         String accessTokenUrl = this.tokenUriTemplate.
                 buildAndExpand(authCode, "authorization_code", redirectUri).toUriString();
 
+        System.out.println("token url: "  + accessTokenUrl);
+        System.out.println("request: "  + request);
+
         ResponseEntity<String> response = restTemplate.exchange(accessTokenUrl, HttpMethod.POST, request, String.class);
 
         // Get the Access Token From the received JSON response
         ObjectMapper mapper = new ObjectMapper();
         try {
             tokenResponse = mapper.readValue(response.getBody(), TokenResponse.class);
+            System.out.println("tokenResponse: " + tokenResponse);  
+            if(tokenResponse.getIdToken() == null || tokenResponse.getAccessToken() == null){
+
+                throw new IOException("Could not get a token " + tokenResponse.getAdditionalProperties());
+            }
             String[] chunks = tokenResponse.getIdToken().split("\\.");
             Base64.Decoder decoder = Base64.getDecoder();
             String payload = new String(decoder.decode(chunks[1]));
@@ -111,7 +119,7 @@ public class UserAuthServiceImpl implements UserAuthService {
             tokenResponse.setCompanyNumber(node.path("company").asText());
             tokenResponse.setTokenIssuer(node.path("iss").asText());
             userTokenStoreMap.put(node.path("family_name").asText(), tokenResponse);
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return tokenResponse;

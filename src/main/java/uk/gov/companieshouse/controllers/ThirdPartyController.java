@@ -3,10 +3,7 @@ package uk.gov.companieshouse.controllers;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.validation.Valid;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -67,6 +64,7 @@ public class ThirdPartyController {
         Map m  = new HashMap<String, String>();
         m.put("claims", claims);
         redirectAttributes.addAllAttributes(m);
+        System.out.println("Authorize URL:" + authoriseUri + ' ' + redirectAttributes);
         return "redirect:" + authoriseUri;
     }
 
@@ -81,6 +79,7 @@ public class ThirdPartyController {
             BindingResult result, RedirectAttributes redirectAttributes, Model model) {
         if (result.hasErrors()) {
             List<FieldError> errorsList = result.getFieldErrors();
+            System.out.println("HAS ERRORS - " + errorsList);
             model.addAttribute("errors", errorsList);
             return "loginRequestedScope";
         }
@@ -91,6 +90,7 @@ public class ThirdPartyController {
         String claims = getClaimsParameter("1234");
         System.out.println("Claims:" + claims);
         redirectAttributes.addAttribute("claims", claims);
+        System.out.println("Authorize URL with company:" + authoriseUri + ' ' + redirectAttributes);
         return "redirect:" + authoriseUri;
     }
 
@@ -98,6 +98,9 @@ public class ThirdPartyController {
     public String handleRedirect(@RequestParam("code") String code, Model model)
             throws IOException {
         TokenResponse tokens = userAuthService.getTokens(code);
+        if(tokens.getIdToken() == null || tokens.getAccessToken() == null){
+            throw new IOException("Could not get a token: " + tokens.getAdditionalProperties());
+        }
         System.out.println("TOKENS: " + tokens.toString());
         User user = userAuthService.getUserDetails(tokens.getAccessToken());
         model.addAttribute("user", user);
