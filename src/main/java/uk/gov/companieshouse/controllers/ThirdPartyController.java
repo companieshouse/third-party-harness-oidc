@@ -134,7 +134,7 @@ public class ThirdPartyController {
         ObjectNode idtokenNode = mapper.createObjectNode();
         idtokenNode.set("company", companyNode2);
 
-        rootNode.set("userInfo", userInfoNode);
+        rootNode.set("userinfo", userInfoNode);
         rootNode.set("id_token", idtokenNode);
 
         String jsonString = null;
