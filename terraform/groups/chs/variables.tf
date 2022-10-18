@@ -63,7 +63,7 @@ variable "certificate_domain" {
 
 variable "applications" {
   type    = list(string)
-  default = ["webapps", "api-filing"]
+  default = ["webapps", "api-filing", "chsauth"]
 }
 
 variable "clients" {
@@ -79,6 +79,10 @@ variable "clients" {
     {
       client_id     = "ApiFilingM2MClient"
       client_secret = "ApiFilingM2MClient"
+    },
+    {
+      client_id     = "CHSWebClient"
+      client_secret = "CHSWebClient"
     }
   ]
 }
