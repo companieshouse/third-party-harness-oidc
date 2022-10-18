@@ -63,7 +63,7 @@ variable "certificate_domain" {
 
 variable "applications" {
   type    = list(string)
-  default = ["webapps", "api-filing", "chs-auth"]
+  default = ["webapps", "api-filing", "chsauth"]
 }
 
 variable "clients" {
