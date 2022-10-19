@@ -57,6 +57,7 @@ public class ThirdPartyController {
         redirectAttributes.addAttribute("response_type", "code");
         redirectAttributes.addAttribute("client_id", clientId);
         redirectAttributes.addAttribute("redirect_uri", redirectUri);
+        redirectAttributes.addAttribute("prompt", "login");
         redirectAttributes.addAttribute(SCOPE, USER_SCOPE);
 
         String claims = getClaimsParameter(company);
@@ -87,6 +88,8 @@ public class ThirdPartyController {
         redirectAttributes.addAttribute("response_type", "code");
         redirectAttributes.addAttribute("client_id", clientId);
         redirectAttributes.addAttribute("redirect_uri", redirectUri);
+        redirectAttributes.addAttribute("ForceAuth", true);
+
         String claims = getClaimsParameter("1234");
         System.out.println("Claims:" + claims);
         redirectAttributes.addAttribute("claims", claims);
