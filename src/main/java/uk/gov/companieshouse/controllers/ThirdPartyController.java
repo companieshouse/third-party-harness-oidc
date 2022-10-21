@@ -30,8 +30,9 @@ import uk.gov.companieshouse.service.UserAuthService;
 public class ThirdPartyController {
     private static final String SCOPE = "scope";
 //    private static final String USER_SCOPE = "https://identity.company-information.service.gov.uk/user/profile.read";
-    private static final String USER_SCOPE = "openid profile";
+    private static final String USER_SCOPE = "openid profile ";
 
+    private static final String COMPANY = "company";
     private final UserAuthService userAuthService;
 
     @Value("${client-id}")
@@ -53,14 +54,23 @@ public class ThirdPartyController {
 
     @GetMapping(value = "/attemptLogin")
     public String attemptLogin(RedirectAttributes redirectAttributes,
-                               @RequestParam(value = "company", required = true) String company) {
+                               @RequestParam Map<String,String> allParams) {
+        StringBuilder scopes = new StringBuilder(USER_SCOPE);
+        for (String param : allParams.keySet()) {
+            if (!COMPANY.equals(param)) {
+                scopes.append(allParams.get(param));
+                scopes.append(" ");
+            }
+        }
+
+
         redirectAttributes.addAttribute("response_type", "code");
         redirectAttributes.addAttribute("client_id", clientId);
         redirectAttributes.addAttribute("redirect_uri", redirectUri);
         redirectAttributes.addAttribute("prompt", "login");
-        redirectAttributes.addAttribute(SCOPE, USER_SCOPE);
+        redirectAttributes.addAttribute(SCOPE, scopes.toString().trim());
 
-        String claims = getClaimsParameter(company);
+        String claims = getClaimsParameter(allParams.get(COMPANY));
         System.out.println("Claims:" + claims);
         Map m  = new HashMap<String, String>();
         m.put("claims", claims);
@@ -109,7 +119,7 @@ public class ThirdPartyController {
         model.addAttribute("user", user);
         model.addAttribute("accessToken", tokens.getAccessToken());
         model.addAttribute("idToken", tokens.getIdToken());
-        model.addAttribute("company", tokens.getCompanyNumber());
+        model.addAttribute(COMPANY, tokens.getCompanyNumber());
         model.addAttribute("tokenIssuer", tokens.getTokenIssuer());
         model.addAttribute("query", new Query());
         return "loginResult";
@@ -132,10 +142,10 @@ public class ThirdPartyController {
         companyNode2.put("value", companyNo);
 
         ObjectNode userInfoNode = mapper.createObjectNode();
-        userInfoNode.set("company", companyNode1);
+        userInfoNode.set(COMPANY, companyNode1);
 
         ObjectNode idtokenNode = mapper.createObjectNode();
-        idtokenNode.set("company", companyNode2);
+        idtokenNode.set(COMPANY, companyNode2);
 
         rootNode.set("userinfo", userInfoNode);
         rootNode.set("id_token", idtokenNode);
