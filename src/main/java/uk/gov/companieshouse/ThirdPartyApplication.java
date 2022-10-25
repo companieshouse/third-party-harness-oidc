@@ -31,10 +31,6 @@ public class ThirdPartyApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         boolean startUpError = false;
 
-        LOGGER.info("ClientID: {} ", clientId);
-        LOGGER.info("ClientSecret: {} ", clientSecret);
-        LOGGER.info("RedirectURI: {} ", redirectUri);
-
         if (clientId == null || clientId.isEmpty()) {
             LOGGER.warn("No client id set in application.properties, please create one");
             startUpError = true;
