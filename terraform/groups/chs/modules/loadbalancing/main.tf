@@ -69,7 +69,7 @@ resource "aws_lb_listener_rule" "host_based_routing" {
 
   condition {
     host_header {
-      values = ["${var.applications[count.index + 1]}${var.domain_name}"]
+      values = ["${var.service_name}-${var.applications[count.index + 1]}${var.domain_name}"]
     }
   }
 }
