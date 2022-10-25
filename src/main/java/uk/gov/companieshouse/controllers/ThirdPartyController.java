@@ -6,9 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import javax.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -36,8 +33,6 @@ public class ThirdPartyController {
     private static final String USER_SCOPE = "openid profile";
 
     private final UserAuthService userAuthService;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ThirdPartyController.class);
 
     @Value("${client-id}")
     private String clientId;
@@ -71,7 +66,6 @@ public class ThirdPartyController {
         m.put("claims", claims);
         redirectAttributes.addAllAttributes(m);
         System.out.println("Authorize URL:" + authoriseUri + ' ' + redirectAttributes);
-        LOGGER.info("Authorize URL:" + authoriseUri + ' ' + redirectAttributes);
         return "redirect:" + authoriseUri;
     }
 
