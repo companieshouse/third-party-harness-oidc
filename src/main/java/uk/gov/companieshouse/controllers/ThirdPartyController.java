@@ -1,8 +1,6 @@
 package uk.gov.companieshouse.controllers;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import javax.validation.Valid;
 
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.companieshouse.model.Query;
 import uk.gov.companieshouse.model.Scope;
 import uk.gov.companieshouse.model.TokenResponse;
@@ -29,8 +26,7 @@ import uk.gov.companieshouse.service.UserAuthService;
 @Controller
 public class ThirdPartyController {
     private static final String SCOPE = "scope";
-//    private static final String USER_SCOPE = "https://identity.company-information.service.gov.uk/user/profile.read";
-    private static final String USER_SCOPE = "openid profile ";
+    //private static final String USER_SCOPE = "openid profile ";
 
     private static final String COMPANY = "company";
     private final UserAuthService userAuthService;
@@ -55,7 +51,7 @@ public class ThirdPartyController {
     @GetMapping(value = "/attemptLogin")
     public String attemptLogin(RedirectAttributes redirectAttributes,
                                @RequestParam Map<String,String> allParams) {
-        StringBuilder scopes = new StringBuilder(USER_SCOPE);
+        StringBuilder scopes = new StringBuilder();
         for (String param : allParams.keySet()) {
             if (!COMPANY.equals(param)) {
                 scopes.append(allParams.get(param));
