@@ -38,6 +38,8 @@ public class ThirdPartyController {
     @Value("${authorise-uri}")
     private String authoriseUri;
 
+    private static final String USER_SCOPE = "openid profile ";
+
     @Autowired
     public ThirdPartyController(UserAuthService userAuthService) {
         this.userAuthService = userAuthService;
@@ -51,7 +53,7 @@ public class ThirdPartyController {
     @GetMapping(value = "/attemptLogin")
     public String attemptLogin(RedirectAttributes redirectAttributes,
                                @RequestParam Map<String,String> allParams) {
-        StringBuilder scopes = new StringBuilder();
+        StringBuilder scopes = new StringBuilder(USER_SCOPE);
         for (String param : allParams.keySet()) {
             if (!COMPANY.equals(param)) {
                 scopes.append(allParams.get(param));
