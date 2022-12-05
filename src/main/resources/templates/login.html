@@ -16,9 +16,9 @@
   <form th:action="@{/attemptLogin}">
     Enter company number: <input type="text" th:name="company"/>
     <br/><br/>
-    <input type="checkbox" id="accountProfileRead" th:name="userDeleteProfile" value="https://account.companieshouse.gov.uk/user/profile.read">
+    <input type="checkbox" id="accountProfileRead" th:name="userAccountProfileRead" value="https://account.companieshouse.gov.uk/user/profile.read">
     <label for="userWriteFull">https://account.companieshouse.gov.uk/user/profile.read</label><br>
-    <input type="checkbox" id="identityProfileRead" th:name="userDeleteProfile" value="https://identity.company-information.service.gov.uk/user/profile.read">
+    <input type="checkbox" id="identityProfileRead" th:name="userIdentityProfileRead" value="https://identity.company-information.service.gov.uk/user/profile.read">
     <label for="userWriteFull"> https://identity.company-information.service.gov.uk/user/profile.read</label><br>
     <input type="checkbox" id="userWriteFull" th:name="userWriteFull" value="https://identity.company-information.service.gov.uk/user.write-full">
     <label for="userWriteFull"> https://identity.company-information.service.gov.uk/user.write-full</label><br>
