@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,7 +21,6 @@ import uk.gov.companieshouse.model.Query;
 import uk.gov.companieshouse.model.Scope;
 import uk.gov.companieshouse.model.TokenResponse;
 import uk.gov.companieshouse.model.User;
-import uk.gov.companieshouse.service.ApiService;
 import uk.gov.companieshouse.service.UserAuthService;
 
 @Controller
@@ -32,7 +30,6 @@ public class ThirdPartyController {
 
     private static final String COMPANY = "company";
     private final UserAuthService userAuthService;
-    private final ApiService apiService;
 
     @Value("${client-id}")
     private String clientId;
@@ -44,9 +41,8 @@ public class ThirdPartyController {
     private static final String USER_SCOPE = "openid profile ";
 
     @Autowired
-    public ThirdPartyController(UserAuthService userAuthService, ApiService apiService) {
+    public ThirdPartyController(UserAuthService userAuthService) {
         this.userAuthService = userAuthService;
-        this.apiService = apiService;
     }
 
     @GetMapping(value = "/login")
@@ -124,11 +120,6 @@ public class ThirdPartyController {
         model.addAttribute(COMPANY, tokens.getCompanyNumber());
         model.addAttribute("tokenIssuer", tokens.getTokenIssuer());
         model.addAttribute("query", new Query());
-
-        ResponseEntity<String> apiResponse = apiService.getApiResponse(tokens.getAccessToken());
-        System.out.println("API Response = " + apiResponse);
-        model.addAttribute("apiResponseStatus", apiResponse.getStatusCode().value());
-        model.addAttribute("apiResponseBody", apiResponse.getBody());
         return "loginResult";
     }
 
