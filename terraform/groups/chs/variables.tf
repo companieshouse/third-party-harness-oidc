@@ -98,3 +98,7 @@ variable "user_uri" {
 variable "authorise_uri" {
   type = string
 }
+
+variable "api_uri" {
+  type = string
+}

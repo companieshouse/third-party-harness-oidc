@@ -77,4 +77,5 @@ module "test_harness" {
   log_group_name          = "forgerock-monitoring"
   log_prefix              = "${var.service_name}-${var.applications[count.index]}"
   tags                    = local.common_tags
+  api_uri                 = var.api_uri
 }

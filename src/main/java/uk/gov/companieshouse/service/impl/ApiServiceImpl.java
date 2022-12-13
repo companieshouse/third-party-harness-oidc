@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,9 @@ import java.util.Collections;
 
 @Service
 public class ApiServiceImpl implements ApiService {
+
+    @Value("${api-uri}")
+    protected String apiUri;
 
     private final RestTemplate restTemplate;
     private static final String AUTH_HEADER = "Authorization";
@@ -32,7 +36,6 @@ public class ApiServiceImpl implements ApiService {
         headers.add(AUTH_HEADER, BEARER_HEADER + accessToken);
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        return restTemplate
-                .exchange("https://forgerock-ig-external-2116952719.eu-west-2.elb.amazonaws.com", HttpMethod.GET, request, String.class);
+        return restTemplate.exchange(apiUri, HttpMethod.GET, request, String.class);
     }
 }
