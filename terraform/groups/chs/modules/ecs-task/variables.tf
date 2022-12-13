@@ -94,3 +94,7 @@ variable "tags" {
     Team           = string
   })
 }
+
+variable "api_uri" {
+  type = string
+}

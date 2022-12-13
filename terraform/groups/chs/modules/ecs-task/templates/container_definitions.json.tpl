@@ -34,6 +34,10 @@
       {
         "name": "AUTHORISE_URI",
         "value": "${authorise_uri}"
+      },
+      {
+        "name": "API_URI",
+        "value": "${api_uri}"
       }
     ],
     "portMappings": [
